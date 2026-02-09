@@ -58,7 +58,7 @@ app.use("/api/payment", paymentRoutes);
 // HEALTH CHECK
 // ============================
 app.get("/", (req, res) => {
-  res.json({ message: "KalaSutra API running " });
+  res.json({ message: "KalaSutra API running" });
 });
 
 // ============================
