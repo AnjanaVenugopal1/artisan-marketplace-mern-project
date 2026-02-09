@@ -29,13 +29,16 @@ const app = express();
 // ============================
 app.use(
   cors({
-    origin: "http://localhost:5173", // frontend
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: [
+      "http://localhost:5173",
+      process.env.CLIENT_URL, 
+    ],
+    credentials: true,
   })
 );
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // ============================
 // STATIC FILES (UPLOADS)
@@ -52,10 +55,10 @@ app.use("/api/users", userRoutes);
 app.use("/api/payment", paymentRoutes);
 
 // ============================
-// TEST ROUTE
+// HEALTH CHECK
 // ============================
-app.get("/", (req, res) => {
-  res.send("KalaSutra API running");
+app.get("/api", (req, res) => {
+  res.json({ message: "KalaSutra API running " });
 });
 
 // ============================
@@ -65,7 +68,7 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => {
-    console.error("MongoDB connection error:", err.message);
+    console.error(" MongoDB connection error:", err.message);
     process.exit(1);
   });
 
