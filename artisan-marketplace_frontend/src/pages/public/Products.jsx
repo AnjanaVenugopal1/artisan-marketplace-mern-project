@@ -40,6 +40,10 @@ export default function Products() {
           productsData = res.data.data;
         }
 
+        productsData = productsData.filter(
+  (p) => p.status === "Approved" || p.status === "Pending"
+);
+
         setProducts(productsData);
         setTotalPages(pages);
       } catch (err) {

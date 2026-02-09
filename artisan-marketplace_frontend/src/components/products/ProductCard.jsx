@@ -1,45 +1,43 @@
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const BACKEND_URL = import.meta.env.VITE_API_URL.replace("/api", "");
 
 export default function ProductCard({ product }) {
   const navigate = useNavigate();
 
- const handleBuyNow = async (e) => {
-  e.preventDefault();
+  const handleBuyNow = async (e) => {
+    e.preventDefault();
 
-  const token = localStorage.getItem("token");
-  if (!token) {
-    alert("Please login first");
-    navigate("/login");
-    return;
-  }
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please login first");
+      navigate("/login");
+      return;
+    }
 
-  try {
-    const res = await api.post("/payment/create-checkout-session", {
-      productId: product._id,
-    });
+    try {
+      const res = await api.post("/payment/create-checkout-session", {
+        productId: product._id,
+      });
 
-    window.location.href = res.data.url;
-  } catch (err) {
-    console.error("Payment error:", err);
-    alert("Payment failed");
-  }
-};
+      window.location.href = res.data.url;
+    } catch (err) {
+      console.error("Payment error:", err);
+      alert("Payment failed");
+    }
+  };
 
+  const handleAddToCart = () => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
+    if (!cart.find((item) => item._id === product._id)) {
+      cart.push(product);
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
 
- const handleAddToCart = () => {
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-  if (!cart.find((item) => item._id === product._id)) {
-    cart.push(product);
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }
-
-  navigate("/cart"); 
-};
+    navigate("/cart");
+  };
 
   return (
     <div className="group relative bg-gradient-to-b from-gray-900 to-gray-950
@@ -51,7 +49,7 @@ export default function ProductCard({ product }) {
           <img
             src={
               product.image
-                ? `${API_URL}${product.image}`
+                ? `${BACKEND_URL}${product.image}`
                 : "/images/placeholder.jpg"
             }
             alt={product.name}
